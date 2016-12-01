@@ -6,21 +6,23 @@ import * as webpack from 'webpack'
  * See: https://github.com/webpack/html-loader#advanced-options
  */
 const DefaultHtmlLoaderOptions = {
-  minimize: true,
-  removeAttributeQuotes: false,
-  caseSensitive: true,
-  // customAttrSurround: [
-  //   [/#/, /(?:)/],
-  //   [/\*/, /(?:)/],
-  //   [/\[?\(?/, /(?:)/]
-  // ],
-  // customAttrAssign: [/\)?\]?=/]
+  htmlLoader: {
+    minimize: true,
+    removeAttributeQuotes: false,
+    caseSensitive: true,
+    // customAttrSurround: [
+    //   [/#/, /(?:)/],
+    //   [/\*/, /(?:)/],
+    //   [/\[?\(?/, /(?:)/]
+    // ],
+    // customAttrAssign: [/\)?\]?=/]
+  }
 } as any
 
 /**
  * @param exclude add paths to packages that have problems with their sourcemaps
  */
-export = function production({devtool = 'source-map', dedupe = false, htmlLoaderOptions = DefaultHtmlLoaderOptions} = {}) {
+export = function production({devtool = 'source-map', dedupe = false, loaderOptions = {}} = {}) {
   const WebpackMd5Hash = require('webpack-md5-hash')
 
   return function production(this: WebpackConfigWithMetadata): WebpackConfigWithMetadata {
@@ -71,9 +73,7 @@ export = function production({devtool = 'source-map', dedupe = false, htmlLoader
          * Description: Plugin to set loaders intro minimize mode
          */
         new (webpack as any).LoaderOptionsPlugin({
-          options: {
-            htmlLoader: htmlLoaderOptions
-          }
+          options: Object.assign({}, DefaultHtmlLoaderOptions, loaderOptions)
         }),
 
         new webpack.DefinePlugin({
